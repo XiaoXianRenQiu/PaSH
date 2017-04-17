@@ -14,6 +14,7 @@
 @property (nonatomic,retain)WKWebView *webView;
 @property (nonatomic,retain)NSTextView *textView;
 @property (nonatomic,retain)NSButton *goButton;
+@property (nonatomic,retain)NSScrollView *scrollView;
 
 @end
 

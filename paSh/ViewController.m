@@ -45,6 +45,12 @@
     _textView = [[NSTextView alloc] initWithFrame:CGRectMake((mainWidth - 20)/2+20, 10, (mainWidth - 20)/2-5, (mainHeight - 40))];
     [_textView setTextColor:[NSColor redColor]];
     [_textView setString:@"email"];
+    _textView.selectable = YES;
+    [_textView setConstrainedFrameSize:CGSizeMake(100, 2000)];
+//    _scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake((mainWidth - 20)/2+20, 10, (mainWidth - 20)/2-5, (mainHeight - 40))];
+//    [_scrollView ]
+    
+    
     [self.view addSubview:_textView];
     
     //输入框
@@ -291,13 +297,47 @@
                 
                 [_webView loadRequest:navigationAction.request];
                 dataString = [NSMutableString string];
+                
             }
             
-        
             break;
         }
         case WKNavigationTypeOther:{
         
+
+            if (![self searchAllKeys:[urlDictionary allKeys] isIncludeKey:webView.URL.absoluteString]) {
+                
+                [_textField setStringValue:[NSString stringWithFormat:@"%@",webView.URL]];
+                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:webView.URL];
+                [request setHTTPMethod:@"GET"];
+                [request setTimeoutInterval:60];
+                
+                
+                NSURLSession *session = [NSURLSession sharedSession];
+                NSURLSessionTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    
+                    if (error == nil) {
+                        
+                        if (data) {
+                            
+                            [self emailData:data];
+                            
+                        }
+                        
+                    }else{
+                        
+                        NSLog(@"抓去数据失败!!!!!!!!! %@",error);
+                        
+                    }
+                    
+                }];
+                
+                [task resume];
+            }
+            
+            [urlDictionary setObject:webView.URL.absoluteString
+                              forKey:webView.URL.absoluteString];
+
             
             break;
         }
